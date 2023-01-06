@@ -1,1 +1,3 @@
-nohup python -u main.py -t 1 -jr 1 -nc 20 -nb 10 -data mnist-0.1-npz -m cnn -algo FedALA -et 1 -li 2 -rp 80 -did 0 > result-mnist-0.1-npz.out 2>&1 &
+python main.py --local_steps 4 --global_rounds 100 --batch_size 8 --dataset mnist --num_classes 10 \
+    --num_clients 100 --join_ratio "0.1" --folder_path "../../dataset_idx/mnist/dirichlet/dir_1_sparse/100client"  \
+    --local_learning_rate 0.001

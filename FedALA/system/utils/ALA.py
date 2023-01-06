@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import copy
 import random
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Subset
 from typing import List, Tuple
 
 class ALA:
@@ -71,7 +71,8 @@ class ALA:
         rand_ratio = self.rand_percent / 100
         rand_num = int(rand_ratio*len(self.train_data))
         rand_idx = random.randint(0, len(self.train_data)-rand_num)
-        rand_loader = DataLoader(self.train_data[rand_idx:rand_idx+rand_num], self.batch_size, drop_last=True)
+        subset = Subset(self.train_data, np.arange(rand_idx, rand_idx+rand_num))
+        rand_loader = DataLoader(subset, self.batch_size, drop_last=True)
 
 
         # obtain the references of the parameters
@@ -148,8 +149,8 @@ class ALA:
 
             # train the weight until convergence
             if len(losses) > self.num_pre_loss and np.std(losses[-self.num_pre_loss:]) < self.threshold:
-                print('Client:', self.cid, '\tStd:', np.std(losses[-self.num_pre_loss:]),
-                    '\tALA epochs:', cnt)
+                # print('Client:', self.cid, '\tStd:', np.std(losses[-self.num_pre_loss:]),
+                #     '\tALA epochs:', cnt)
                 break
 
         self.start_phase = False

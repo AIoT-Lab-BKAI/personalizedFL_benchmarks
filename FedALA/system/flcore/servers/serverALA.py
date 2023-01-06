@@ -45,8 +45,8 @@ class FedALA(object):
             self.send_models()
 
             if i%self.eval_gap == 0:
-                print(f"\n-------------Round number: {i}-------------")
-                print("\nEvaluate global model")
+                print(f"-------------Round number: {i}-------------")
+                print("Evaluate global model")
                 self.evaluate()
 
             threads = [Thread(target=client.train)
@@ -58,7 +58,7 @@ class FedALA(object):
             self.aggregate_parameters()
 
             self.Budget.append(time.time() - s_t)
-            print('-'*50, self.Budget[-1])
+            print("Round duration:", round(self.Budget[-1], 3), 's')
 
         print("\nBest global accuracy.")
         print(max(self.rs_test_acc))
@@ -67,8 +67,8 @@ class FedALA(object):
 
     def set_clients(self, args):
         for i in range(self.num_clients):
-            train_data = read_client_data(self.dataset, i, is_train=True)
-            test_data = read_client_data(self.dataset, i, is_train=False)
+            train_data = read_client_data(self.dataset, i, is_train=True, folder_path=args.folder_path)
+            test_data = read_client_data(self.dataset, i, is_train=False, folder_path=args.folder_path)
             client = clientALA(args, id=i, train_dataset=train_data, test_dataset=test_data)
             self.clients.append(client)
 
@@ -122,7 +122,7 @@ class FedALA(object):
         tot_auc = []
         for c in self.clients:
             ct, ns, auc = c.test_metrics()
-            print(f'Client {c.id}: Acc: {ct*1.0/ns}, AUC: {auc}')
+            # print(f'Client {c.id}: Acc: {ct*1.0/ns}, AUC: {auc}')
             tot_correct.append(ct*1.0)
             tot_auc.append(auc*ns)
             num_samples.append(ns)
@@ -136,7 +136,7 @@ class FedALA(object):
         losses = []
         for c in self.clients:
             cl, ns = c.train_metrics()
-            print(f'Client {c.id}: Train loss: {cl*1.0/ns}')
+            # print(f'Client {c.id}: Train loss: {cl*1.0/ns}')
             num_samples.append(ns)
             losses.append(cl*1.0)
 
@@ -165,7 +165,7 @@ class FedALA(object):
             loss.append(train_loss)
 
         print("Averaged Train Loss: {:.4f}".format(train_loss))
-        print("Averaged Test Accurancy: {:.4f}".format(test_acc))
+        print("Averaged Test Accuracy: {:.4f}".format(test_acc))
         print("Averaged Test AUC: {:.4f}".format(test_auc))
-        print("Std Test Accurancy: {:.4f}".format(np.std(accs)))
+        print("Std Test Accuraccy: {:.4f}".format(np.std(accs)))
         print("Std Test AUC: {:.4f}".format(np.std(aucs)))

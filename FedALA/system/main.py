@@ -30,9 +30,9 @@ def run(args):
 
         # Generate args.model
         if model_str == "cnn":
-            if args.dataset[:5] == "mnist":
+            if args.dataset.lower() == "mnist":
                 args.model = FedAvgCNN(in_features=1, num_classes=args.num_classes, dim=1024).to(args.device)
-            elif args.dataset[:5] == "Cifar":
+            elif args.dataset.lower() == "cifar10":
                 args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=1600).to(args.device)
             else:
                 args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=10816).to(args.device)
@@ -46,7 +46,7 @@ def run(args):
         else:
             raise NotImplementedError
                             
-        print(args.model)
+        # print(args.model)
 
         if args.algorithm == "FedALA":
             server = FedALA(args, i)
@@ -76,16 +76,16 @@ if __name__ == "__main__":
     parser.add_argument('-nb', "--num_classes", type=int, default=10)
     parser.add_argument('-m', "--model", type=str, default="cnn")
     parser.add_argument('-lbs', "--batch_size", type=int, default=10)
-    parser.add_argument('-lr', "--local_learning_rate", type=float, default=0.005,
+    parser.add_argument('-lr', "--local_learning_rate", type=float, default=0.001,
                         help="Local learning rate")
-    parser.add_argument('-gr', "--global_rounds", type=int, default=1000)
-    parser.add_argument('-ls', "--local_steps", type=int, default=1)
-    parser.add_argument('-algo', "--algorithm", type=str, default="FedGP")
-    parser.add_argument('-jr', "--join_ratio", type=float, default=1.0,
+    parser.add_argument('-gr', "--global_rounds", type=int, default=10)
+    parser.add_argument('-ls', "--local_steps", type=int, default=5)
+    parser.add_argument('-algo', "--algorithm", type=str, default="FedALA")
+    parser.add_argument('-jr', "--join_ratio", type=float, default=0.1,
                         help="Ratio of clients per round")
-    parser.add_argument('-rjr', "--random_join_ratio", type=bool, default=False,
+    parser.add_argument('-rjr', "--random_join_ratio", type=bool, default=True,
                         help="Random ratio of clients per round")
-    parser.add_argument('-nc', "--num_clients", type=int, default=20,
+    parser.add_argument('-nc', "--num_clients", type=int, default=100,
                         help="Total number of clients")
     parser.add_argument('-pv', "--prev", type=int, default=0,
                         help="Previous Running times")
@@ -97,6 +97,8 @@ if __name__ == "__main__":
     parser.add_argument('-et', "--eta", type=float, default=1.0)
     parser.add_argument('-rp', "--rand_percent", type=int, default=100)
     parser.add_argument('-li', "--layer_idx", type=int, default=0)
+    
+    parser.add_argument("--folder_path", default="../../dataset_idx/mnist/dirichlet/dir_1_sparse/100client")
 
     args = parser.parse_args()
 
