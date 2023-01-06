@@ -1,0 +1,2 @@
+CUDA_VISIBLE_DEVICES=1 python3 main.py --dataset Cifar10 --model dnn --algorithm pFedMe --batch_size 4 --learning_rate 0.01 --personal_learning_rate 0.01  --beta 1 --lamda 15 --num_global_iters 250 --local_epochs 4 --numusers 10 > pFedMe_cifar10.log &
+# python3 main.py --dataset cifar10 --model dnn --algorithm PerAvg --batch_size 4 --learning_rate 0.001 --personal_learning_rate 0.09 --num_global_iters 250 --local_epochs 4 --numusers 20 > PerAvg.log &
