@@ -13,7 +13,7 @@ def create_parser():
     parser = argparse.ArgumentParser(add_help=True, description='Adaptive Personalized Cross-Silo Federated Learning (APPLE)')
 
     # Random seed
-    parser.add_argument("--seed", type=int, default=42, help="Random seed")
+    parser.add_argument("--seed", type=int, default=20, help="Random seed")
 
     # Data sources
     parser.add_argument("--data", type=str, default="mnist",  choices=["mnist", "cifar10", "pathmnist", "organmnist_axial"], help="Dataset name")
@@ -45,6 +45,8 @@ def create_parser():
     parser.add_argument("--log_step", type=int , default=10, help="Output every X batches")
     parser.add_argument("--data_dist_dir", type=str, default="./data_dist", help="Directory of the data distribution figure")
     parser.add_argument("--hist_dir", type=str, default="./results", help="Directory of the results")
+    
+    parser.add_argument("--folder_path", tye=str, default="../dataset_idx/mnist/dirichlet/dir_1_sparse/100client")
 
     args = parser.parse_args()
     return args

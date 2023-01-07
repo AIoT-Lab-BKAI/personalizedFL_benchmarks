@@ -10,6 +10,8 @@ from utils.data_loader import get_federated_datasets_dict
 from utils.models import Net, ClientNet
 from utils.losses import reg_loss, get_reg_coef
 from utils.apple import init_pss, prepare_client_model
+from utils.easyFL_dataloader import setData, set_jsons, read_client_data
+from utils.easyFL_models import mnistNet, cifar10Net, cifar100Net
 
 import syft as sy 
 hook = sy.TorchHook(torch)
@@ -123,12 +125,18 @@ def main():
         num_classes = 9
     elif args.data == "organmnist_axial":
         num_classes = 11
+    elif args.data == "cifar100":
+        num_classes = 100
+        
     create_dir(args)
     set_seed(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # prepare datasets: {'client1': dataset1, ...}
-    trainsets, valsets, testsets = get_federated_datasets_dict(args, True)
+    # # prepare datasets: {'client1': dataset1, ...}
+    # trainsets, valsets, testsets = read_client_data(args, True)
+    
+    setData(args.data)
+    num_clients = set_jsons(args.folder_path)
 
     # prepare client_pack: [(syft_client1, dataloader1), ...], and weights (for initial values of p's)
     central_server = sy.VirtualWorker(hook, id="server")
@@ -136,23 +144,29 @@ def main():
     clients_pack_val = []
     clients_pack_test = []
     num_samples = []
-    for client_id, trainset in trainsets.items():
-        if client_id.startswith("entire"):
-            continue
+    for client_id in range(num_clients):
+        # if client_id.startswith("entire"):
+        #     continue
+        
+        trainset, testset = read_client_data(client_id)
+        
         num_samples.append(len(trainset))
         client = sy.VirtualWorker(hook, id=client_id)
+        
         train_dloader = DataLoader(dataset=trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)
-        val_dloader = DataLoader(dataset=valsets[client_id], batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
-        test_dloader = DataLoader(dataset=testsets[client_id], batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
+        # val_dloader = DataLoader(dataset=valset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
+        test_dloader = DataLoader(dataset=testset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
+        
         clients_pack_train.append((client, train_dloader))
-        clients_pack_val.append((client, val_dloader))
+        # clients_pack_val.append((client, val_dloader))
         clients_pack_test.append((client, test_dloader))
 
     # prepare model and loss
-    prototype_model = Net(in_channels=in_channels, num_classes=num_classes).to(device)
-    print()
-    print(prototype_model)
-    print()
+    # prototype_model = Net(in_channels=in_channels, num_classes=num_classes).to(device)
+    # print()
+    # print(prototype_model)
+    # print()
+    
     criterion = nn.CrossEntropyLoss()
 
     # train and test
@@ -193,11 +207,11 @@ def main():
                                                                                                device,
                                                                                                clients_pack_train,
                                                                                                mode="Train")
-        val_loss, val_acc, val_clients_losses, val_clients_accs = val_with_local_model(client_models,
-                                                                                       criterion,
-                                                                                       device,
-                                                                                       clients_pack_val,
-                                                                                       mode="Val")
+        # val_loss, val_acc, val_clients_losses, val_clients_accs = val_with_local_model(client_models,
+        #                                                                                criterion,
+        #                                                                                device,
+        #                                                                                clients_pack_val,
+        #                                                                                mode="Val")
         test_loss, test_acc, test_clients_losses, test_clients_accs = val_with_local_model(client_models,
                                                                                            criterion,
                                                                                            device,
@@ -212,11 +226,11 @@ def main():
             hist["pss"].append(copy.deepcopy(pss))
         hist['train_losses'].append(train_loss)
         hist['train_accs'].append(train_acc)
-        hist['val_losses'].append(val_loss)
-        hist['val_accs'].append(val_acc)
-        hist["val_clients_accs"].append(val_clients_accs)
-        hist["val_clients_mean_accs"].append(np.mean(val_clients_accs))
-        hist["val_clients_losses"].append(val_clients_losses)
+        # hist['val_losses'].append(val_loss)
+        # hist['val_accs'].append(val_acc)
+        # hist["val_clients_accs"].append(val_clients_accs)
+        # hist["val_clients_mean_accs"].append(np.mean(val_clients_accs))
+        # hist["val_clients_losses"].append(val_clients_losses)
         hist['test_losses'].append(test_loss)
         hist['test_accs'].append(test_acc)
         hist["test_clients_accs"].append(test_clients_accs)
