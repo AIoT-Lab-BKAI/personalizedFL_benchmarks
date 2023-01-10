@@ -76,10 +76,7 @@ class FedALA(object):
             
         json.dump(self.results, open(
             os.path.join(save_folder, 
-                         f"FedALA_LR{self.args.local_learning_rate}_\
-                             R{self.args.global_rounds}_\
-                                 B{self.args.batch_size}_\
-                                     E{self.args.local_epochs}.json")))
+                         f"FedALA_LR{self.args.local_learning_rate}_R{self.args.global_rounds}_B{self.args.batch_size}_E{self.args.local_epochs}.json", "w")))
 
 
     def set_clients(self, args):
