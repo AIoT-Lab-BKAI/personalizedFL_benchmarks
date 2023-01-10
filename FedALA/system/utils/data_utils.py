@@ -5,12 +5,6 @@ from torch.utils.data import Dataset
 import json
 from torchvision import datasets, transforms
 
-# IMAGE_SIZE = 28
-# IMAGE_PIXELS = IMAGE_SIZE * IMAGE_SIZE
-# NUM_CHANNELS = 1
-
-# IMAGE_SIZE_CIFAR = 32
-# NUM_CHANNELS_CIFAR = 3
 
 TRAINDATA = None
 TESTDATA = None
@@ -79,27 +73,7 @@ def get_batch_sample(data, batch_size):
     return (batched_x, batched_y)
 
 
-# def read_data(dataset, idx, is_train=True):
-#     if is_train:
-#         train_data_dir = os.path.join('../dataset', dataset, 'train/')
-
-#         train_file = train_data_dir + 'train' + str(idx) + '_.npz'
-#         with open(train_file, 'rb') as f:
-#             train_data = np.load(f, allow_pickle=True)['data'].tolist()
-
-#         return train_data
-
-#     else:
-#         test_data_dir = os.path.join('../dataset', dataset, 'test/')
-
-#         test_file = test_data_dir + 'test' + str(idx) + '_.npz'
-#         with open(test_file, 'rb') as f:
-#             test_data = np.load(f, allow_pickle=True)['data'].tolist()
-
-#         return test_data
-
-
-def setData(dataset:str):
+def setData(dataset:str, data_path:str):
     global TRAINDATA
     global TESTDATA
     
@@ -108,13 +82,13 @@ def setData(dataset:str):
     
     if dataset.lower() == "mnist":
         TRAINDATA = datasets.MNIST(
-            root="../../data",
+            root=data_path,
             train=True,
             download=False,
             transform=transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]),
         )
         TESTDATA = datasets.MNIST(
-            root="../../data",
+            root=data_path,
             train=False,
             download=False,
             transform=transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]),
@@ -122,14 +96,14 @@ def setData(dataset:str):
         
     elif dataset.lower() == "cifar10":
         TRAINDATA = datasets.CIFAR10(
-            root="../../data",
+            root=data_path,
             train=True,
             download=False,
             transform=transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))]),
         )
 
         TESTDATA = datasets.CIFAR10(
-            root="../../../data",
+            root=data_path,
             train=False,
             download=False,
             transform=transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))]),
@@ -137,14 +111,14 @@ def setData(dataset:str):
         
     elif dataset.lower() == "cifar100":
         TRAINDATA = datasets.CIFAR100(
-            root="../../data",
+            root=data_path,
             train=True,
             download=False,
             transform=transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))]),
         )
 
         TESTDATA = datasets.CIFAR100(
-            root="../../data",
+            root=data_path,
             train=False,
             download=False,
             transform=transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))]),
@@ -154,47 +128,22 @@ def setData(dataset:str):
         raise NotImplementedError
     
     
-def set_jsons(dataset:str, folder_path:str):
+def set_jsons(dataset:str, idx_path:str):
     global TRAINJSON
     global TESTJSON
     
     if TRAINJSON is None or TESTJSON is None:
-        TRAINJSON = json.load(open(os.path.join(folder_path, "train.json")))
-        TESTJSON = json.load(open(os.path.join(folder_path, "test.json")))
+        TRAINJSON = json.load(open(os.path.join(idx_path, "train.json")))
+        TESTJSON = json.load(open(os.path.join(idx_path, "test.json")))
     return
     
     
-def read_client_data(dataset: str, idx, is_train=True, folder_path=None):
-    setData(dataset)
-    set_jsons(dataset, folder_path)
+def read_client_data(dataset: str, client_id, is_train=True, idx_path=None, data_path=None):
+    setData(dataset, data_path)
+    set_jsons(dataset, idx_path)
     
     global TRAINDATA, TESTDATA, TRAINJSON, TESTJSON
     if is_train:
-        return CustomDataset(TRAINDATA, TRAINJSON[str(idx)])
+        return CustomDataset(TRAINDATA, TRAINJSON[str(client_id)])
     else:
-        return CustomDataset(TESTDATA, TESTJSON[str(idx)])
-
-
-# def read_client_data_text(dataset, idx, is_train=True):
-#     if is_train:
-#         train_data = read_data(dataset, idx, is_train)
-#         X_train, X_train_lens = list(zip(*train_data['x']))
-#         y_train = train_data['y']
-
-#         X_train = torch.Tensor(X_train).type(torch.int64)
-#         X_train_lens = torch.Tensor(X_train_lens).type(torch.int64)
-#         y_train = torch.Tensor(train_data['y']).type(torch.int64)
-
-#         train_data = [((x, lens), y) for x, lens, y in zip(X_train, X_train_lens, y_train)]
-#         return train_data
-#     else:
-#         test_data = read_data(dataset, idx, is_train)
-#         X_test, X_test_lens = list(zip(*test_data['x']))
-#         y_test = test_data['y']
-
-#         X_test = torch.Tensor(X_test).type(torch.int64)
-#         X_test_lens = torch.Tensor(X_test_lens).type(torch.int64)
-#         y_test = torch.Tensor(test_data['y']).type(torch.int64)
-
-#         test_data = [((x, lens), y) for x, lens, y in zip(X_test, X_test_lens, y_test)]
-#         return test_data
+        return CustomDataset(TESTDATA, TESTJSON[str(client_id)])

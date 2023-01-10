@@ -1,11 +1,12 @@
 import copy
+from pathlib import Path
 import numpy as np
 import torch
 import time
-from flcore.clients.clientALA import *
-from utils.data_utils import read_client_data
+from system.flcore.clients.clientALA import *
+from system.utils.data_utils import read_client_data
 from threading import Thread
-
+import json, os
 
 class FedALA(object):
     def __init__(self, args, times):
@@ -30,7 +31,12 @@ class FedALA(object):
 
         self.times = times
         self.eval_gap = args.eval_gap
-
+        self.log_folder = args.log_path
+        self.args = args
+        
+        self.results = {'train_loss': [], 'mean_acc': [], 'std_acc': [],
+                        'arguments': args}
+        
         self.set_clients(args)
 
         print(f"\nJoin ratio / total clients: {self.join_ratio} / {self.num_clients}")
@@ -63,12 +69,23 @@ class FedALA(object):
         print("\nBest global accuracy.")
         print(max(self.rs_test_acc))
         print(sum(self.Budget[1:])/len(self.Budget[1:]))
+        
+        save_folder = os.path.join(self.log_folder, f"{self.args.dataset}/N{self.num_clients}_K{int(self.num_clients * self.join_ratio)}")
+        if not Path(save_folder).exists():
+            os.makedirs(save_folder)
+            
+        json.dump(self.results, open(
+            os.path.join(save_folder, 
+                         f"FedALA_LR{self.args.local_learning_rate}_\
+                             R{self.args.global_rounds}_\
+                                 B{self.args.batch_size}_\
+                                     E{self.args.epochs}.json")))
 
 
     def set_clients(self, args):
         for i in range(self.num_clients):
-            train_data = read_client_data(self.dataset, i, is_train=True, folder_path=args.folder_path)
-            test_data = read_client_data(self.dataset, i, is_train=False, folder_path=args.folder_path)
+            train_data = read_client_data(self.dataset, i, is_train=True, folder_path=args.folder_path, idx_path=args.idx_path, data_path=args.data_path)
+            test_data = read_client_data(self.dataset, i, is_train=False, folder_path=args.folder_path, idx_path=args.idx_path, data_path=args.data_path)
             client = clientALA(args, id=i, train_dataset=train_data, test_dataset=test_data)
             self.clients.append(client)
 
@@ -169,3 +186,7 @@ class FedALA(object):
         print("Averaged Test AUC: {:.4f}".format(test_auc))
         print("Std Test Accuraccy: {:.4f}".format(np.std(accs)))
         print("Std Test AUC: {:.4f}".format(np.std(aucs)))
+        
+        self.results['train_loss'].append(train_loss)
+        self.results['mean_acc'].append(test_acc)
+        self.results['std_acc'].append(np.std(accs))

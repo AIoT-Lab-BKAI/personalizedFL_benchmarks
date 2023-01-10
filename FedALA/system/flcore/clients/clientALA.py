@@ -6,8 +6,8 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from sklearn.preprocessing import label_binarize
 from sklearn import metrics
-from utils.data_utils import read_client_data
-from utils.ALA import ALA
+from system.utils.data_utils import read_client_data
+from system.utils.ALA import ALA
 
 
 class clientALA(object):
@@ -31,7 +31,7 @@ class clientALA(object):
         self.rand_percent = args.rand_percent
         self.layer_idx = args.layer_idx
 
-        train_data = read_client_data(self.dataset, self.id, is_train=True)
+        train_data = read_client_data(self.dataset, self.id, is_train=True, idx_path=args.idx_path, data_path=args.data_path)
         self.ALA = ALA(self.id, self.loss, train_data, self.batch_size, 
                     self.rand_percent, self.layer_idx, self.eta, self.device)
         

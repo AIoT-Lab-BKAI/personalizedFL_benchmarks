@@ -6,8 +6,8 @@ import warnings
 import numpy as np
 import torchvision
 
-from flcore.servers.serverALA import FedALA
-from flcore.trainmodel.models import *
+from system.flcore.servers.serverALA import FedALA
+from system.flcore.trainmodel.easyFL_models import mnistNet, cifar10Net, cifar100Net
 
 warnings.simplefilter("ignore")
 torch.manual_seed(0)
@@ -31,17 +31,17 @@ def run(args):
         # Generate args.model
         if model_str == "cnn":
             if args.dataset.lower() == "mnist":
-                args.model = FedAvgCNN(in_features=1, num_classes=args.num_classes, dim=1024).to(args.device)
+                # args.model = FedAvgCNN(in_features=1, num_classes=args.num_classes, dim=1024).to(args.device)
+                args.model = mnistNet().to(args.device)
             elif args.dataset.lower() == "cifar10":
-                args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=1600).to(args.device)
+                # args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=1600).to(args.device)
+                args.model = cifar10Net().to(args.device)
             else:
-                args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=10816).to(args.device)
+                # args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=10816).to(args.device)
+                args.model = cifar100Net().to(args.device)
 
         elif model_str == "resnet":
             args.model = torchvision.models.resnet18(pretrained=False, num_classes=args.num_classes).to(args.device)
-
-        elif model_str == "fastText":
-            args.model = fastText(hidden_dim=hidden_dim, vocab_size=vocab_size, num_classes=args.num_classes).to(args.device)
         
         else:
             raise NotImplementedError
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     parser.add_argument('-nb', "--num_classes", type=int, default=10)
     parser.add_argument('-m', "--model", type=str, default="cnn")
     parser.add_argument('-lbs', "--batch_size", type=int, default=10)
-    parser.add_argument('-lr', "--local_learning_rate", type=float, default=0.001,
+    parser.add_argument('-lr', "--local_learning_rate", type=float, default=0.005,
                         help="Local learning rate")
     parser.add_argument('-gr', "--global_rounds", type=int, default=10)
     parser.add_argument('-ls', "--local_steps", type=int, default=5)
@@ -98,7 +98,9 @@ if __name__ == "__main__":
     parser.add_argument('-rp', "--rand_percent", type=int, default=100)
     parser.add_argument('-li', "--layer_idx", type=int, default=0)
     
-    parser.add_argument("--folder_path", default="../../dataset_idx/mnist/dirichlet/dir_1_sparse/100client")
+    parser.add_argument("--idx_path", default="dataset_idx/mnist/dirichlet/dir_1_sparse/100client")
+    parser.add_argument("--log_path", default="log/")
+    parser.add_argument("--data_path", default="path/to/data")
 
     args = parser.parse_args()
 
