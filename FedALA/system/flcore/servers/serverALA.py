@@ -84,8 +84,8 @@ class FedALA(object):
 
     def set_clients(self, args):
         for i in range(self.num_clients):
-            train_data = read_client_data(self.dataset, i, is_train=True, folder_path=args.folder_path, idx_path=args.idx_path, data_path=args.data_path)
-            test_data = read_client_data(self.dataset, i, is_train=False, folder_path=args.folder_path, idx_path=args.idx_path, data_path=args.data_path)
+            train_data = read_client_data(self.dataset, i, is_train=True, idx_path=args.idx_path, data_path=args.data_path)
+            test_data = read_client_data(self.dataset, i, is_train=False, idx_path=args.idx_path, data_path=args.data_path)
             client = clientALA(args, id=i, train_dataset=train_data, test_dataset=test_data)
             self.clients.append(client)
 

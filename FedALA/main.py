@@ -33,6 +33,7 @@ def run(args):
             if args.dataset.lower() == "mnist":
                 # args.model = FedAvgCNN(in_features=1, num_classes=args.num_classes, dim=1024).to(args.device)
                 args.model = mnistNet().to(args.device)
+                
             elif args.dataset.lower() == "cifar10":
                 # args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=1600).to(args.device)
                 args.model = cifar10Net().to(args.device)
@@ -71,7 +72,7 @@ if __name__ == "__main__":
     # general
     parser.add_argument('-dev', "--device", type=str, default="cuda",
                         choices=["cpu", "cuda"])
-    parser.add_argument('-did', "--device_id", type=str, default="0")
+    # parser.add_argument('-did', "--device_id", type=str, default="0")
     parser.add_argument('-data', "--dataset", type=str, default="mnist")
     parser.add_argument('-nb', "--num_classes", type=int, default=10)
     parser.add_argument('-m', "--model", type=str, default="cnn")
@@ -104,7 +105,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    os.environ["CUDA_VISIBLE_DEVICES"] = args.device_id
+    # os.environ["CUDA_VISIBLE_DEVICES"] = args.device_id
     # torch.cuda.set_device(int(args.device_id))
 
     if args.device == "cuda" and not torch.cuda.is_available():
