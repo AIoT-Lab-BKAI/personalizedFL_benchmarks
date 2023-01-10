@@ -7,6 +7,7 @@ from system.flcore.clients.clientALA import *
 from system.utils.data_utils import read_client_data
 from threading import Thread
 import json, os
+import wandb
 
 class FedALA(object):
     def __init__(self, args, times):
@@ -33,9 +34,10 @@ class FedALA(object):
         self.eval_gap = args.eval_gap
         self.log_folder = args.log_path
         self.args = args
+        self.wandb = True
+        self.max_acc = 0
         
-        self.results = {'train_loss': [], 'mean_acc': [], 'std_acc': [],
-                        'arguments': args}
+        self.results = {'train_loss': [], 'mean_acc': [], 'std_acc': [], 'idx_file': args.idx_path}
         
         self.set_clients(args)
 
@@ -187,3 +189,16 @@ class FedALA(object):
         self.results['train_loss'].append(train_loss)
         self.results['mean_acc'].append(test_acc)
         self.results['std_acc'].append(np.std(accs))
+        
+        self.max_acc = max(self.max_acc, test_acc)
+
+        # wandb record
+        if self.wandb:
+            wandb.log(
+                {
+                    "Training Loss":        train_loss, 
+                    "Mean Client Accuracy": test_acc,
+                    "Std Client Accuracy":  np.std(accs),
+                    "Max Testing Accuracy": self.max_acc
+                }
+            )

@@ -5,6 +5,7 @@ import time
 import warnings
 import numpy as np
 import torchvision
+import wandb
 
 from system.flcore.servers.serverALA import FedALA
 from system.flcore.trainmodel.easyFL_models import mnistNet, cifar10Net, cifar100Net
@@ -99,9 +100,11 @@ if __name__ == "__main__":
     parser.add_argument('-rp', "--rand_percent", type=int, default=100)
     parser.add_argument('-li', "--layer_idx", type=int, default=0)
     
+    parser.add_argument("--task", default="mnist_N100_K10")
     parser.add_argument("--idx_path", default="dataset_idx/mnist/dirichlet/dir_1_sparse/100client")
     parser.add_argument("--log_path", default="log/")
     parser.add_argument("--data_path", default="path/to/data")
+    parser.add_argument("--wandb", type=int, default=1)
 
     args = parser.parse_args()
 
@@ -112,4 +115,13 @@ if __name__ == "__main__":
         print("\ncuda is not avaiable.\n")
         args.device = "cpu"
 
+    if args.wandb:
+        wandb.init(
+            project="HungNN-perFL", 
+            entity="aiotlab",
+            group=args.task,
+            name='FedALA',
+            config=args
+        )
+        
     run(args)
