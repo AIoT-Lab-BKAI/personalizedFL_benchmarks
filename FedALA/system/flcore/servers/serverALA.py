@@ -79,7 +79,7 @@ class FedALA(object):
                          f"FedALA_LR{self.args.local_learning_rate}_\
                              R{self.args.global_rounds}_\
                                  B{self.args.batch_size}_\
-                                     E{self.args.epochs}.json")))
+                                     E{self.args.local_epochs}.json")))
 
 
     def set_clients(self, args):
