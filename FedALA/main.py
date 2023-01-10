@@ -80,7 +80,7 @@ if __name__ == "__main__":
     parser.add_argument('-lr', "--local_learning_rate", type=float, default=0.005,
                         help="Local learning rate")
     parser.add_argument('-gr', "--global_rounds", type=int, default=10)
-    parser.add_argument('-ls', "--local_steps", type=int, default=5)
+    parser.add_argument('-ls', "--local_epochs", type=int, default=5)
     parser.add_argument('-algo', "--algorithm", type=str, default="FedALA")
     parser.add_argument('-jr', "--join_ratio", type=float, default=0.1,
                         help="Ratio of clients per round")

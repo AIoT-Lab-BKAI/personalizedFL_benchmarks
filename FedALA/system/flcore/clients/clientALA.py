@@ -22,7 +22,7 @@ class clientALA(object):
         self.test_samples = len(test_dataset)
         self.batch_size = args.batch_size
         self.learning_rate = args.local_learning_rate
-        self.local_steps = args.local_steps
+        self.local_epochs = args.local_epochs
         
         self.loss = nn.CrossEntropyLoss()
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.learning_rate)
@@ -44,7 +44,7 @@ class clientALA(object):
         trainloader = self.load_train_data()
         self.model.train()
 
-        for step in range(self.local_steps):
+        for epoch in range(self.local_epochs):
             for i, (x, y) in enumerate(trainloader):
                 if type(x) == type([]):
                     x[0] = x[0].to(self.device)
