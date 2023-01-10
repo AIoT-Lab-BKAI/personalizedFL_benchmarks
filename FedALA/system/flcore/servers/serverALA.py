@@ -196,7 +196,6 @@ class FedALA(object):
         if self.wandb:
             wandb.log(
                 {
-                    "Training Loss":        train_loss, 
                     "Mean Client Accuracy": test_acc,
                     "Std Client Accuracy":  np.std(accs),
                     "Max Testing Accuracy": self.max_acc
