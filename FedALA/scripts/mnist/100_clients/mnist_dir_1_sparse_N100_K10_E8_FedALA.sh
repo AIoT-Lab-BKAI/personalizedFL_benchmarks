@@ -25,18 +25,17 @@
 ALG="FedALA"
 MODEL="cnn"
 WANDB=1
-ROUND=300
+ROUND=500
 EPOCHS=8
 BATCH=16
 PROPOTION=0.10
 GPU_ID=0
 TASK="mnist_dir_1_sparse_N100_K10_E8"
-IDX_DIR="../mnist/dir_1_sparse/100client"
-
-DATASET="./log"
-NUMCLASS=./data
-NUMCLIENT=mnist
-LR=10
+IDX_DIR="../dataset_idx/mnist/dirichlet/dir_1_sparse/100client"
+DATASET="mnist"
+NUMCLASS=10
+NUMCLIENT=100
+LR=0.005
 
 cd personalizedFL_benchmarks/FedALA
 

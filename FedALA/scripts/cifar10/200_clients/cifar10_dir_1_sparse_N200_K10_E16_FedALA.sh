@@ -31,12 +31,11 @@ BATCH=16
 PROPOTION=0.05
 GPU_ID=0
 TASK="cifar10_dir_1_sparse_N200_K10_E16"
-IDX_DIR="../cifar10/dir_1_sparse/200client"
-
-DATASET="./log"
-NUMCLASS=./data
-NUMCLIENT=cifar10
-LR=10
+IDX_DIR="../dataset_idx/cifar10/dirichlet/dir_1_sparse/200client"
+DATASET="cifar10"
+NUMCLASS=10
+NUMCLIENT=200
+LR=0.005
 
 cd personalizedFL_benchmarks/FedALA
 
