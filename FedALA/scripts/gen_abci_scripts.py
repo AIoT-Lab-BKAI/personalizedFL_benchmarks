@@ -2,10 +2,10 @@ import os
 from pathlib import Path
 
 
-dataset = "cifar10"
+dataset = "mnist"
 noniid = "dir_1_sparse"
-N = 100
-K = 10
+N = 20
+K = 5
 total_epochs = 4000
 batch_size = 16
 
