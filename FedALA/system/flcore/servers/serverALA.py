@@ -34,7 +34,7 @@ class FedALA(object):
         self.eval_gap = args.eval_gap
         self.log_folder = args.log_path
         self.args = args
-        self.wandb = True
+        self.wandb = args.wandb
         self.max_acc = 0
         
         self.results = {'train_loss': [], 'mean_acc': [], 'std_acc': [], 'idx_file': args.idx_path}
