@@ -63,12 +63,12 @@ class clientALA(object):
     def load_train_data(self, batch_size=None):
         if batch_size == None:
             batch_size = self.batch_size
-        return DataLoader(self.train_dataset, batch_size, drop_last=True, shuffle=False)
+        return DataLoader(self.train_dataset, batch_size, drop_last=False, shuffle=False)
 
     def load_test_data(self, batch_size=None):
         if batch_size == None:
             batch_size = self.batch_size
-        return DataLoader(self.test_dataset, batch_size, drop_last=True, shuffle=False)
+        return DataLoader(self.test_dataset, batch_size, drop_last=False, shuffle=False)
 
     def test_metrics(self, model=None):
         testloader = self.load_test_data()
@@ -102,6 +102,7 @@ class clientALA(object):
                     lb = lb[:, :2]
                 y_true.append(lb)
 
+        # print(y_prob)
         y_prob = np.concatenate(y_prob, axis=0)
         y_true = np.concatenate(y_true, axis=0)
 
