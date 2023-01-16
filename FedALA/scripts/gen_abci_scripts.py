@@ -61,6 +61,7 @@ body_text = "\
 CUDA_VISIBLE_DEVICES=${GPU_ID} python main.py --local_epochs ${EPOCHS} --global_rounds ${ROUND} \
 --batch_size ${BATCH} --dataset ${DATASET} --num_classes ${NUMCLASS} \
 --num_clients ${NUMCLIENT} --join_ratio ${PROPOTION} --local_learning_rate ${LR} \
+--wandb ${WANDB} \
 --task ${TASK} \
 --idx_path ${IDX_DIR}  \
 --data_path ${DATA_DIR} \
