@@ -72,7 +72,7 @@ class ALA:
         rand_num = int(rand_ratio*len(self.train_data))
         rand_idx = random.randint(0, len(self.train_data)-rand_num)
         subset = Subset(self.train_data, np.arange(rand_idx, rand_idx+rand_num))
-        rand_loader = DataLoader(subset, self.batch_size, drop_last=True)
+        rand_loader = DataLoader(subset, self.batch_size, drop_last=False)
 
 
         # obtain the references of the parameters
