@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class mnistNet(nn.Module):
+class mnistCNN(nn.Module):
     """ CNN
     """
     def __init__(self):
@@ -31,8 +31,23 @@ class mnistNet(nn.Module):
         x = self.fc2(x)
         return x
     
+class mnistMLP(nn.Module):
+    def __init__(self):
+        super(mnistMLP, self).__init__()
+        self.fc1 = nn.Linear(784, 200)
+        self.fc2 = nn.Linear(200, 200)
+        self.fc3 = nn.Linear(200, 10)
 
-class cifar10Net(nn.Module):
+    def forward(self, x):
+        x = x.view(-1, x.shape[1] * x.shape[-2] * x.shape[-1])
+        x = self.fc1(x)
+        x = F.relu(x)
+        x = self.fc2(x)
+        x = F.relu(x)
+        x = self.fc3(x)
+        return x
+
+class cifar10CNN(nn.Module):
     """ CNN
     """
     def __init__(self):
@@ -65,6 +80,29 @@ class cifar10Net(nn.Module):
     def forward(self, x):
         x = self.encoder(x)
         x = self.decoder(x)
+        return x
+    
+
+class cifar10MLP(nn.Module):
+    def __init__(self, dim_in=3*32*32, dim_hidden=256, dim_out=10):
+        super(cifar10MLP, self).__init__()
+        self.fc1 = nn.Linear(dim_in, dim_hidden)
+        self.fc2 = nn.Linear(dim_in, dim_hidden)
+        self.fc3 = nn.Linear(dim_hidden, dim_out)
+
+    def forward(self, x):
+        x = self.encoder(x)
+        x = self.decoder(x)
+        return x
+
+    def decoder(self, x):
+        x = self.fc3(x)
+        return x
+
+    def encoder(self, x):
+        x = x.view(-1, x.shape[1] * x.shape[-2] * x.shape[-1])
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
         return x
     
     

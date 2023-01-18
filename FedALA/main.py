@@ -8,7 +8,7 @@ import torchvision
 import wandb
 
 from system.flcore.servers.serverALA import FedALA
-from system.flcore.trainmodel.easyFL_models import mnistNet, cifar10Net, cifar100Net
+from system.flcore.trainmodel.easyFL_models import mnistCNN, mnistMLP, cifar10CNN, cifar10MLP, cifar100Net
 
 warnings.simplefilter("ignore")
 torch.manual_seed(0)
@@ -33,15 +33,26 @@ def run(args):
         if model_str == "cnn":
             if args.dataset.lower() == "mnist":
                 # args.model = FedAvgCNN(in_features=1, num_classes=args.num_classes, dim=1024).to(args.device)
-                args.model = mnistNet().to(args.device)
+                args.model = mnistCNN().to(args.device)
                 
             elif args.dataset.lower() == "cifar10":
                 # args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=1600).to(args.device)
-                args.model = cifar10Net().to(args.device)
+                args.model = cifar10CNN().to(args.device)
             else:
                 # args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=10816).to(args.device)
                 args.model = cifar100Net().to(args.device)
 
+        elif model_str == 'mlp':
+            if args.dataset.lower() == "mnist":
+                # args.model = FedAvgCNN(in_features=1, num_classes=args.num_classes, dim=1024).to(args.device)
+                args.model = mnistMLP().to(args.device)
+                
+            elif args.dataset.lower() == "cifar10":
+                # args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=1600).to(args.device)
+                args.model = cifar10MLP().to(args.device)
+            else:
+                raise NotImplementedError
+            
         elif model_str == "resnet":
             args.model = torchvision.models.resnet18(pretrained=False, num_classes=args.num_classes).to(args.device)
         

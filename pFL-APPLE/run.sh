@@ -1,1 +1,0 @@
-python train_APPLE.py --data mnnist --image_size 28 --batch_size 16 --num_rounds 100 --num_local_epochs 8 
