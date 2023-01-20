@@ -198,6 +198,6 @@ class FedALA(object):
                 {
                     "Mean Client Accuracy": test_acc,
                     "Std Client Accuracy":  np.std(accs),
-                    "Max Testing Accuracy": self.max_acc
+                    "Max Average Local Accuracy": self.max_acc
                 }
             )
